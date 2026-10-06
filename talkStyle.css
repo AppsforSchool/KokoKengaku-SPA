@@ -1,0 +1,1996 @@
+:root {
+  --primary: #007AB7;
+  --primary-rgb: 0, 122, 183;
+
+  --light: #fcf2e8;
+
+  /* --- 追加トークン（テーマカラーは変更なし、派生値のみ） --- */
+  --primary-dark: #005f8f;
+  --primary-soft: #eaf5fc;
+  --bg: #eef1f5;
+  --surface: #ffffff;
+  --surface-alt: #f6f8fa;
+  --text: #24303d;
+  --text-muted: #7c8794;
+  --border: #e6e9ee;
+
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-full: 999px;
+
+  --shadow-sm: 0 1px 2px rgba(20, 30, 40, 0.06);
+  --shadow-md: 0 6px 20px rgba(20, 30, 40, 0.08);
+  --shadow-lg: 0 16px 40px rgba(20, 30, 40, 0.14);
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+html {
+  font-size: 16px;
+}
+body {
+  font-family: "BIZ UDGothic", sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  touch-action: manipulation;
+}
+div, p {
+  touch-action: manipulation;
+}
+a {
+  color: var(--primary);
+}
+.hidden {
+  display: none !important;
+}
+.visually-hidden-input {
+  display: none;
+}
+.split-line {
+  display: flex;
+  width: 100%;
+  border-bottom: 1.5px solid var(--border);
+  margin: 1.25rem auto;
+}
+
+
+/* --- 起動時オーバーレイ --- */
+#loading-overlay,
+#no-active-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(15, 20, 26, 0.85);
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  gap: 0.5rem;
+  padding: 1rem;
+}
+#loading-overlay h1 {
+  font-size: 2.6rem;
+  color: white;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+#loading-overlay p,
+#no-active-overlay p {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+.loading-progress-bar {
+  width: 200px;
+  max-width: 70vw;
+  height: 3px;
+  border-radius: var(--radius-full);
+  background-color: rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  margin-top: 0.3rem;
+}
+.loading-progress-bar-fill {
+  width: 0%;
+  height: 100%;
+  background-color: #fff;
+  border-radius: var(--radius-full);
+  transition: width 0.25s var(--ease);
+}
+#loading-overlay.hidden,
+#no-active-overlay.hidden {
+  display: none;
+}
+#loading-overlay-skip-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.6rem 1.2rem;
+  margin-top: 0.5rem;
+  text-align: center;
+  cursor: pointer;
+  background-color: transparent;
+  color: rgba(255, 255, 255, 0.85);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-md);
+  transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+#loading-overlay-skip-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.7);
+}
+#loading-overlay-skip-button.hidden {
+  display: none;
+}
+
+/* --- 汎用ボタン（ドロワー・各種モーダルで共通使用） --- */
+.normal-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.7rem;
+  width: 100%;
+  margin-top: 0.5rem;
+  text-align: center;
+  cursor: pointer;
+  display: block;
+  box-sizing: border-box;
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+.normal-button:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+  box-shadow: var(--shadow-md);
+}
+.normal-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+.normal-button:disabled {
+  background-color: #dbe0e6;
+  color: #9aa4ae;
+  border: none;
+  box-shadow: none;
+}
+.normal-button.logout-button {
+  background-color: var(--surface-alt);
+  color: #d64545;
+  box-shadow: none;
+  border: 1.5px solid var(--border);
+}
+.normal-button.logout-button:hover:not(:disabled) {
+  background-color: #fdecec;
+  border-color: #f3c8c8;
+}
+
+
+/* --- アカウント設定ドロワー --- */
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(15, 20, 26, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s var(--ease), visibility 0.3s var(--ease);
+}
+.drawer-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 320px;
+  max-width: 85%;
+  height: 100%;
+  background-color: var(--surface);
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  transform: translateX(100%);
+  transition: transform 0.35s var(--ease);
+  padding: 1.5rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+.drawer.is-open {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.drawer-header p {
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin: 0;
+  color: var(--text);
+}
+.drawer-close-button {
+  background-color: var(--surface-alt);
+  border: none;
+  font-size: 1.3rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--text-muted);
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: var(--radius-full);
+  transition: background-color 0.2s var(--ease), color 0.2s var(--ease);
+  text-align: center;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.drawer-close-button:hover {
+  background-color: var(--border);
+  color: var(--text);
+}
+
+.drawer-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-left: 2px;
+  padding-right: 6px;
+}
+
+.drawer-section {
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.drawer-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.drawer-section p.title {
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: var(--primary);
+  text-transform: uppercase;
+  margin-top: 0;
+  margin-bottom: 0.6rem;
+}
+.drawer-section p {
+  font-size: 0.92rem;
+  margin-bottom: 0.6rem;
+  color: var(--text);
+}
+
+.drawer input {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  margin-bottom: 10px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  box-sizing: border-box;
+  background-color: var(--surface-alt);
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+.drawer input:hover {
+  border-color: #c7ccd2;
+}
+.drawer input:focus {
+  border-color: var(--primary);
+  background-color: var(--surface);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+.drawer #username-message {
+  font-size: 0.8rem;
+  margin-top: 0.4rem;
+  font-weight: 700;
+}
+
+/* --- モーダル共通 --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 20, 26, 0.55);
+  backdrop-filter: blur(3px);
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+.modal-overlay.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: var(--surface);
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 460px;
+  max-height: 85vh;
+  overflow-y: auto;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  animation: pop-in 0.2s var(--ease);
+}
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.modal-content .title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.modal-content .close-button {
+  background-color: var(--surface-alt);
+  border: none;
+  font-size: 1.3rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--text-muted);
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: var(--radius-full);
+  transition: background-color 0.2s var(--ease), color 0.2s var(--ease);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-content .close-button:hover,
+.modal-content .close-button:focus {
+  color: var(--text);
+  background-color: var(--border);
+  text-decoration: none;
+  cursor: pointer;
+}
+.modal-content .close-button.hidden {
+  display: none;
+}
+.modal-content img {
+  max-width: 100%;
+  max-height: 80vh;
+  height: auto;
+  /* ★ アバター画像(img.avatar-circle)を円形にするため、ここでの角丸指定は無効化している
+        （QRコードなど他の画像は元々四角のままで問題ないため） */
+}
+
+#message-delete-button,
+#new-message-change-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.7rem;
+  width: 100%;
+  margin-top: 0.5rem;
+  text-align: center;
+  cursor: pointer;
+  display: block;
+  box-sizing: border-box;
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease), background-color 0.15s var(--ease);
+}
+#message-delete-button:hover:not(:disabled),
+#new-message-change-button:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+  box-shadow: var(--shadow-md);
+}
+#message-delete-button:active:not(:disabled),
+#new-message-change-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+#message-delete-button {
+  background-color: var(--surface-alt);
+  color: #d64545;
+  box-shadow: none;
+  border: 1.5px solid var(--border);
+}
+#message-delete-button:hover:not(:disabled) {
+  background-color: #fdecec;
+  border-color: #f3c8c8;
+}
+#message-delete-button:disabled {
+  background-color: #f2f3f5;
+  color: #b7bec5;
+  border-color: var(--border);
+  box-shadow: none;
+}
+#new-message-change-button:disabled {
+  background-color: #dbe0e6;
+  color: #9aa4ae;
+  box-shadow: none;
+  cursor: default;
+  transform: none;
+}
+#new-userId-input {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  margin: 0 0 10px 0;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-alt);
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+#new-userId-input:focus {
+  border-color: var(--primary);
+  background-color: var(--surface);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+#new-message-input {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  margin: 0;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-alt);
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+#new-message-input:focus {
+  border-color: var(--primary);
+  background-color: var(--surface);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+#new-message-time-label {
+  text-align: left;
+}
+#new-message-time-input {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  margin: 0.4rem 0 10px 0;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-alt);
+  box-sizing: border-box;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+#new-message-time-input:focus {
+  border-color: var(--primary);
+  background-color: var(--surface);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+#new-message-time-label.hidden,
+#new-message-time-input.hidden {
+  display: none;
+}
+
+/* --- プロフィールモーダル --- */
+#profile-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 0.9rem;
+}
+.profile-avatar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.profile-avatar-wrap #profile-avatar-holder {
+  position: relative;
+}
+.profile-avatar-wrap.editable #profile-avatar-holder {
+  cursor: pointer;
+  transition: opacity 0.15s var(--ease);
+}
+.profile-avatar-wrap.editable #profile-avatar-holder:hover {
+  opacity: 0.82;
+}
+.profile-avatar-wrap.editable #profile-avatar-holder::after {
+  content: "変更";
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+  pointer-events: none;
+}
+#profile-avatar-remove-button {
+  background: none;
+  border: none;
+  color: #d64545;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+  padding: 0;
+}
+#profile-avatar-remove-button.hidden {
+  display: none;
+}
+#profile-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  word-break: break-all;
+  text-align: center;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-md);
+  box-sizing: border-box;
+}
+.member-item.admin .member-name,
+#read-area p .admin,
+#drawerUsername.admin,
+.message .message-user .admin,
+#poll-voters-area p .admin {
+  background: linear-gradient(
+    90deg,
+    #ff5a5a, #ffbc41, #f5f551, #5eff5e, #84a1ff, #ff45ff, #ff5a5a
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: wave 2s linear infinite;
+}
+/* ★ 景品（イベント等で一定期間もらえる演出）：グラデーションは管理者と同一、速度だけ半分（4s）にした変種 */
+.member-item.prize .member-name,
+#read-area p .prize,
+#drawerUsername.prize,
+.message .message-user .prize,
+#poll-voters-area p .prize {
+  background: linear-gradient(
+    90deg,
+    #ff5a5a, #ffbc41, #f5f551, #5eff5e, #84a1ff, #ff45ff, #ff5a5a
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: wave 4s linear infinite;
+}
+@keyframes wave {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+/* ★ プロフィールモーダルの名前（「問題投稿」アプリの実装に合わせて、幅・パディングを含めて専用のルールにする） */
+#profile-name.admin {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  background: linear-gradient(
+    90deg,
+    #ff5a5a, #ffbc41, #f5f551, #5eff5e, #84a1ff, #ff45ff, #ff5a5a
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: wave 2s linear infinite;
+}
+#profile-name.prize {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  background: linear-gradient(
+    90deg,
+    #ff5a5a, #ffbc41, #f5f551, #5eff5e, #84a1ff, #ff45ff, #ff5a5a
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: wave 4s linear infinite;
+}
+
+#profile-name-input {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-alt);
+  box-sizing: border-box;
+  text-align: center;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+#profile-name-input:hover {
+  border-color: #c7ccd2;
+}
+#profile-name-input:focus {
+  border-color: var(--primary);
+  background-color: var(--surface);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+
+.profile-label {
+  align-self: flex-start;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: -0.3rem;
+}
+
+#profile-text,
+#profile-text-edit {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  width: 100%;
+  min-height: 110px;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  word-break: break-word;
+  box-sizing: border-box;
+  line-height: 1.55;
+  text-align: left;
+}
+#profile-text {
+  background-color: var(--surface-alt);
+  border: 1.5px solid var(--border);
+  white-space: pre-wrap;
+  color: var(--text);
+}
+#profile-text-edit {
+  background-color: var(--surface);
+  border: 1.5px solid var(--border);
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+#profile-text-edit:hover {
+  border-color: #c7ccd2;
+}
+#profile-text-edit:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+#profile-text-edit.hidden {
+  display: none;
+}
+
+.profile-edit-button-row {
+  display: flex;
+  gap: 0.6rem;
+  width: 100%;
+}
+#profile-cancel-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.7rem;
+  flex: 1;
+  text-align: center;
+  cursor: pointer;
+  box-sizing: border-box;
+  background-color: var(--surface-alt);
+  color: var(--text-muted);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: background-color 0.15s var(--ease), border-color 0.15s var(--ease);
+}
+#profile-cancel-button:hover {
+  background-color: var(--border);
+}
+#profile-cancel-button.hidden {
+  display: none;
+}
+#profile-edit-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.7rem;
+  flex: 1;
+  text-align: center;
+  cursor: pointer;
+  display: block;
+  box-sizing: border-box;
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease), background-color 0.15s var(--ease);
+}
+#profile-edit-button:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+  box-shadow: var(--shadow-md);
+}
+#profile-edit-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+#profile-edit-button:disabled {
+  background-color: #dbe0e6;
+  color: #9aa4ae;
+  box-shadow: none;
+}
+#profile-edit-button.hidden {
+  display: none;
+}
+
+/* --- 画像送信モーダル専用スタイル --- */
+.image-preview-container {
+  max-width: 100%;
+  max-height: 260px;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  margin-top: 1rem;
+}
+.image-preview-container.hidden {
+  display: none;
+}
+.image-preview-container img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+#image-message-input {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 500;
+  font-size: 0.95rem;
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-alt);
+  margin: 1rem 0 0;
+  resize: none;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+#image-message-input:hover {
+  border-color: #c7ccd2;
+}
+#image-message-input:focus {
+  border-color: var(--primary);
+  background-color: var(--surface);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+
+/* --- 汎用アウトラインボタン（アンケート「選択肢を追加」など） --- */
+.secondary-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.6rem;
+  width: 100%;
+  margin-top: 0.6rem;
+  text-align: center;
+  cursor: pointer;
+  display: block;
+  box-sizing: border-box;
+  background-color: var(--surface-alt);
+  color: var(--primary-dark);
+  border: 1.5px dashed rgba(var(--primary-rgb), 0.4);
+  border-radius: var(--radius-md);
+  transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.secondary-button:hover:not(:disabled) {
+  background-color: var(--primary-soft);
+  border-color: var(--primary);
+}
+.secondary-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* --- アンケート作成モーダル --- */
+#poll-question-input {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 500;
+  font-size: 0.95rem;
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-alt);
+  resize: none;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+#poll-question-input:hover {
+  border-color: #c7ccd2;
+}
+#poll-question-input:focus {
+  border-color: var(--primary);
+  background-color: var(--surface);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+#poll-choices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 0.5rem;
+  max-height: 260px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+.poll-choice-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.poll-choice-input {
+  flex: 1;
+  min-width: 0;
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 500;
+  font-size: 0.92rem;
+  padding: 0.55rem 0.8rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-alt);
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+.poll-choice-input:hover {
+  border-color: #c7ccd2;
+}
+.poll-choice-input:focus {
+  border-color: var(--primary);
+  background-color: var(--surface);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+.poll-choice-remove {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-full);
+  border: none;
+  background-color: var(--surface-alt);
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+.poll-choice-remove:hover {
+  background-color: #fdecec;
+  color: #d64545;
+}
+.poll-choice-remove.hidden {
+  display: none;
+}
+
+/* --- チャット内のアンケート表示 --- */
+.poll-widget {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: min(300px, 100%);
+  background-color: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+  box-shadow: var(--shadow-sm);
+  box-sizing: border-box;
+}
+.poll-choices-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+.poll-choice-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.55rem 0.7rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  background-color: var(--surface-alt);
+  transition: border-color 0.15s var(--ease), background-color 0.15s var(--ease);
+}
+.poll-choice-option:hover {
+  border-color: rgba(var(--primary-rgb), 0.4);
+}
+.poll-choice-option:has(input:checked) {
+  border-color: var(--primary);
+  background-color: var(--primary-soft);
+}
+.poll-choice-option input[type="radio"] {
+  accent-color: var(--primary);
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  margin: 0;
+}
+.poll-choice-label {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text);
+  text-align: left;
+  word-break: break-word;
+}
+.poll-choice-count {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+  flex-shrink: 0;
+  transition: opacity 0.15s var(--ease);
+}
+.poll-choice-count:hover {
+  opacity: 0.7;
+}
+.poll-answer-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.6rem;
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: var(--primary);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  box-shadow: var(--shadow-sm);
+}
+.poll-answer-button:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+  box-shadow: var(--shadow-md);
+}
+.poll-answer-button:disabled {
+  background-color: #dbe0e6;
+  color: #9aa4ae;
+  box-shadow: none;
+  cursor: default;
+}
+
+#poll-voters-area p {
+  padding: 0.6rem 0.5rem;
+  border-radius: var(--radius-sm);
+  width: 100%;
+  transition: background-color 0.15s var(--ease);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+}
+#poll-voters-area {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+#poll-voters-area p:hover {
+  background-color: var(--surface-alt);
+}
+
+
+/* --- ヘッダー領域 --- */
+#app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 1.2rem;
+  background-color: var(--surface);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  gap: 10px;
+}
+#app-header #title-area {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+#app-header #title-area #header-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+}
+#app-header #title-area #header-title .rainbow {
+  background: linear-gradient(
+    90deg,
+    #ff5a5a, #ffbc41, #f5f551, #5eff5e, #84a1ff, #ff45ff, #ff5a5a
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: wave 2s linear infinite;
+}
+
+#user-data {
+  display: flex;
+  align-items: center;
+}
+#setting-button, #share-modal-btn {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 0.5rem 0.9rem;
+  margin: 0 0 0 0.6rem;
+  width: auto;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  background-color: var(--primary-soft);
+  color: var(--primary-dark);
+  border: none;
+  border-radius: var(--radius-full);
+  transition: background-color 0.2s var(--ease), transform 0.15s var(--ease);
+}
+#setting-button:hover, #share-modal-btn:hover {
+  background-color: rgba(var(--primary-rgb), 0.22);
+}
+#setting-button:active, #share-modal-btn:active {
+  transform: scale(0.97);
+}
+
+/* --- メインコンテナ --- */
+#talk-view {
+  max-width: 760px;
+  margin: 1.5rem auto;
+  padding: 0;
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+  overflow: hidden;
+}
+#talk-view-title {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1rem 1.5rem 0.75rem;
+}
+
+.selection {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* --- メンバー・既読モーダルの中身 --- */
+#member-area {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  gap: 4px;
+}
+#read-area {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+
+/* --- 転送先選択モーダルの中身（管理者のみ） --- */
+#forward-modal-loading {
+  padding: 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+#forward-modal-loading.hidden {
+  display: none;
+}
+#forward-room-list {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  gap: 4px;
+  max-height: 55vh;
+  overflow-y: auto;
+}
+.forward-room-item {
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-weight: 700;
+  transition: background-color 0.15s var(--ease);
+}
+.forward-room-item:hover {
+  background-color: var(--surface-alt);
+}
+
+.member-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.6rem 0.5rem;
+  border-radius: var(--radius-sm);
+  gap: 10px;
+  transition: background-color 0.15s var(--ease);
+}
+.member-item:hover {
+  background-color: var(--surface-alt);
+}
+.member-item .member-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.member-name {
+  font-weight: bold;
+  font-size: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.member-last-checked {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+#member-area p,
+#read-area p {
+  font-weight: bold;
+  font-size: 1rem;
+}
+#read-area p {
+  padding: 0.6rem 0.5rem;
+  border-radius: var(--radius-sm);
+  width: 100%;
+  transition: background-color 0.15s var(--ease);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#read-area p:hover {
+  background-color: var(--surface-alt);
+}
+
+/* --- クリック可能なユーザー要素（名前・アバター共通） --- */
+.clickable-user {
+  transition: opacity 0.15s var(--ease);
+  /*text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;*/
+}
+.clickable-user:hover {
+  opacity: 0.7;
+}
+.avatar-circle.clickable-user {
+  text-decoration: none;
+  transition: transform 0.15s var(--ease);
+}
+.avatar-circle.clickable-user:hover {
+  opacity: 1;
+  transform: scale(1.06);
+}
+
+/* --- アバター（頭文字アイコン） --- */
+.avatar-circle {
+  width: 2.2rem;
+  height: 2.2rem;
+  min-width: 2.2rem;
+  border-radius: var(--radius-full);
+  background: linear-gradient(155deg, var(--primary), var(--primary-dark));
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  user-select: none;
+}
+.avatar-circle.small {
+  width: 1.8rem;
+  height: 1.8rem;
+  min-width: 1.8rem;
+  font-size: 0.8rem;
+}
+.avatar-circle.large {
+  width: 4.4rem;
+  height: 4.4rem;
+  min-width: 4.4rem;
+  font-size: 1.7rem;
+}
+img.avatar-circle {
+  object-fit: cover;
+  display: block;
+}
+
+/* --- トーク上部操作エリア --- */
+#head-area {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background-color: var(--surface);
+}
+#talk-problem-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.5rem;
+  background-color: var(--primary-light, rgba(0, 122, 183, 0.08));
+  border-bottom: 1px solid var(--border);
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  text-align: center;
+}
+#talk-problem-banner:hover {
+  background-color: rgba(0, 122, 183, 0.14);
+}
+#talk-problem-banner.hidden {
+  display: none;
+}
+#talk-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  flex-grow: 1;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#member-button {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--primary-dark);
+  background-color: var(--primary-soft);
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  margin: 0;
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease);
+  flex-shrink: 0;
+}
+#member-button:hover {
+  background-color: rgba(var(--primary-rgb), 0.22);
+}
+#select-mode-button {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  background-color: var(--surface-alt);
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  margin: 0;
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease);
+  flex-shrink: 0;
+}
+#select-mode-button:hover {
+  background-color: var(--border);
+}
+
+/* --- 一括選択モード --- */
+.message-select-label {
+  display: none;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+}
+#talk-area.selecting .message-select-label {
+  display: inline-flex;
+}
+.message-select-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+#selection-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--surface-alt);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+#selection-action-bar.hidden {
+  display: none;
+}
+#selection-count-text {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.selection-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.selection-action-buttons button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s var(--ease), opacity 0.15s var(--ease);
+}
+#selection-delete-button {
+  background-color: #ffe1e1;
+  color: #c62828;
+}
+#selection-delete-button:hover:not(:disabled) {
+  background-color: #ffcccc;
+}
+#selection-forward-button {
+  background-color: var(--primary-soft);
+  color: var(--primary-dark);
+}
+#selection-forward-button:hover:not(:disabled) {
+  background-color: rgba(var(--primary-rgb), 0.22);
+}
+#selection-forward-button.hidden {
+  display: none;
+}
+#selection-cancel-button {
+  background-color: var(--border);
+  color: var(--text-muted);
+}
+#selection-cancel-button:hover {
+  background-color: #d7dbe0;
+}
+.selection-action-buttons button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+#to-home-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  padding: 0.45rem 0.75rem;
+  background-color: var(--surface-alt);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+#to-home-button:hover {
+  background-color: var(--border);
+}
+
+/* --- チャット・タイムライン領域 --- */
+#talk-area {
+  display: flex;
+  flex-direction: column;
+  height: 60vh;
+  overflow-y: auto;
+  justify-content: flex-start;
+  padding: 1.25rem 1.25rem 0.5rem;
+  background-color: var(--bg);
+  gap: 4px;
+}
+#talk-loading {
+  padding: 1rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* --- 未読区切り線 --- */
+.unread-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0.4rem 0 0.85rem;
+  color: var(--primary);
+}
+.unread-divider-line {
+  flex: 1;
+  height: 1px;
+  background-color: var(--primary);
+  opacity: 0.45;
+}
+.unread-divider-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 18px;
+}
+.message:last-child {
+  margin-bottom: 0;
+}
+
+.message-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: 85%;
+}
+.message-other .message-row {
+  align-self: flex-start;
+}
+.message-own .message-row {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.bubble-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 6px;
+}
+.message-own .bubble-col {
+  align-items: flex-end;
+}
+.message-other .bubble-col {
+  align-items: flex-start;
+}
+
+.message .message-user {
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.message .message-user .clickable-user {
+  cursor: pointer;
+}
+
+.message .message-text {
+  font-size: 1rem;
+  font-weight: 500;
+  white-space: pre-wrap;
+  line-height: 1.45;
+  text-align: left;
+  padding: 0.65rem 0.95rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  word-break: break-word;
+}
+.message-other .message-text {
+  background-color: var(--surface);
+  color: var(--text);
+  border-bottom-left-radius: var(--radius-xs);
+}
+.message-own .message-text {
+  background-color: var(--primary);
+  color: #fff;
+  border-bottom-right-radius: var(--radius-xs);
+}
+.message-own .message-text a.chat-link {
+  color: #eaf5fc;
+  text-decoration-color: rgba(255, 255, 255, 0.6);
+}
+
+.message .message-text .underline {
+  background: linear-gradient(transparent 70%, rgba(var(--primary-rgb), 0.5) 70%);
+}
+.message-own .message-text .underline {
+  background: linear-gradient(transparent 70%, rgba(255, 255, 255, 0.5) 70%);
+}
+.message .message-text .large {
+  font-size: 1.25rem;
+}
+.message .message-text .small {
+  font-size: 0.85rem;
+}
+.message .message-text .emoji {
+  font-size: 1.3rem;
+  line-height: 1.2;
+  vertical-align: -0.2em;
+}
+.message .message-text .main-color {
+  color: var(--primary);
+}
+.message-own .message-text .main-color {
+  color: var(--light);
+}
+
+/* 画像メッセージ（吹き出しの外側、単独のサムネイルとして表示） */
+.message .message-image {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(260px, 100%);
+  max-height: 260px;
+  aspect-ratio: 1 / 1; /* 読み込み前の仮の比率（正方形プレースホルダー） */
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  background-color: var(--surface-alt);
+  opacity: 0;
+  transition: opacity 0.25s var(--ease);
+}
+.message .message-image.loaded {
+  opacity: 1;
+}
+
+/* --- 返信機能 --- */
+
+/* 吹き出しのすぐ横に置く返信矢印 */
+.bubble-content-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.message-own .bubble-content-row {
+  flex-direction: row-reverse;
+}
+.reply-action {
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.35rem;
+  line-height: 1;
+  flex-shrink: 0;
+  padding: 0.35rem;
+  border-radius: var(--radius-full);
+  transition: color 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+.reply-action:hover {
+  color: var(--primary);
+  background-color: rgba(var(--primary-rgb), 0.12);
+}
+.standalone-reply-row {
+  margin-top: -2px;
+}
+.message-own .standalone-reply-row {
+  justify-content: flex-end;
+}
+
+/* 返信プレビュー（ラベル＋引用バブル）：メッセージ本文の上に独立して表示 */
+.reply-context {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 85%;
+  margin-bottom: 4px;
+}
+.message-other .reply-context {
+  align-self: flex-start;
+  align-items: flex-start;
+}
+.message-own .reply-context {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+.reply-context-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: 0 0.3rem;
+}
+.reply-context-quote {
+  display: block;
+  max-width: 100%;
+  padding: 0.55rem 0.9rem;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: filter 0.2s var(--ease), transform 0.15s var(--ease);
+}
+.reply-context-quote:hover {
+  filter: brightness(0.96);
+}
+.reply-context-quote:active {
+  transform: scale(0.98);
+}
+/* ★ 引用元メッセージが自分のものなら青、そうでなければ薄いグレー */
+.reply-context-quote-own {
+  background-color: var(--primary);
+  color: #fff;
+}
+.reply-context-quote-other {
+  background-color: var(--surface-alt);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+}
+.reply-context-quote.reply-context-quote-missing {
+  cursor: default;
+  background-color: var(--surface-alt);
+  color: var(--text-muted);
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: none;
+}
+
+@keyframes reply-jump-highlight {
+  0% { background-color: rgba(var(--primary-rgb), 0.22); }
+  100% { background-color: transparent; }
+}
+.message.jump-highlight .bubble-col {
+  animation: reply-jump-highlight 1.4s var(--ease);
+  border-radius: var(--radius-md);
+}
+
+#back-to-original-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  width: 100%;
+  padding: 0.55rem;
+  text-align: center;
+  background-color: var(--primary-soft);
+  color: var(--primary-dark);
+  border: none;
+  border-top: 1px solid var(--border);
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease);
+}
+#back-to-original-button:hover {
+  background-color: rgba(var(--primary-rgb), 0.22);
+}
+#back-to-original-button.hidden {
+  display: none;
+}
+
+#reply-preview-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.55rem 1.25rem;
+  background-color: var(--primary-soft);
+  border-top: 1px solid var(--border);
+}
+#reply-preview-bar.hidden {
+  display: none;
+}
+#reply-preview-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#reply-preview-cancel {
+  background-color: rgba(var(--primary-rgb), 0.15);
+  border: none;
+  font-size: 1.05rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--primary-dark);
+  width: 1.9rem;
+  height: 1.9rem;
+  min-width: 1.9rem;
+  border-radius: var(--radius-full);
+  transition: background-color 0.2s var(--ease);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#reply-preview-cancel:hover {
+  background-color: rgba(var(--primary-rgb), 0.3);
+}
+
+/* --- メッセージ送信エリア --- */
+#message-add-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.9rem 1.25rem;
+  background-color: var(--surface);
+  border-top: 1px solid var(--border);
+}
+.message-add-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+#open-image-modal-button,
+#open-poll-modal-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  padding: 0.45rem 0.7rem;
+  background-color: var(--primary-soft);
+  color: var(--primary-dark);
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.2s var(--ease), transform 0.15s var(--ease);
+}
+#open-image-modal-button:hover,
+#open-poll-modal-button:hover {
+  background-color: rgba(var(--primary-rgb), 0.22);
+}
+#open-image-modal-button:active,
+#open-poll-modal-button:active {
+  transform: scale(0.97);
+}
+#message-input {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 500;
+  font-size: 0.98rem;
+  flex-grow: 1;
+  padding: 0.7rem 1.1rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  background-color: var(--surface-alt);
+  resize: none;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+#message-input:focus {
+  border-color: var(--primary);
+  background-color: var(--surface);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+#message-add-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0;
+  padding: 0;
+  width: 2.8rem;
+  height: 2.8rem;
+  flex-shrink: 0;
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease), transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+#message-add-button::before {
+  content: "";
+  width: 1.15rem;
+  height: 1.15rem;
+  background-color: currentColor;
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M2 21l21-9L2 3v7l15 2-15 2v7z'/></svg>");
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M2 21l21-9L2 3v7l15 2-15 2v7z'/></svg>");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+#message-add-button:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+  box-shadow: var(--shadow-md);
+}
+#message-add-button:active:not(:disabled) {
+  transform: scale(0.94);
+}
+#message-add-button:disabled {
+  background-color: #dbe0e6;
+  color: #9aa4ae;
+  box-shadow: none;
+  cursor: default;
+}
+
+/* --- フッター --- */
+footer {
+  background-color: #333;
+  color: white;
+  padding: 0.5rem 0;
+  text-align: center;
+  width: 100%;
+}
+footer p {
+  font-size: 0.7rem;
+}
+
+/* --- レスポンシブ対応 --- */
+@media (max-width: 600px) {
+  #app-header {
+    padding: 0.75rem 1rem;
+  }
+  #user-data {
+    flex-direction: column;
+    gap: 0.3rem;
+    align-items: flex-end;
+  }
+  #setting-button, #share-modal-btn {
+    margin: 0;
+    font-size: 0.75rem;
+    padding: 0.4rem 0.7rem;
+  }
+  #talk-view {
+    margin: 0;
+    border-radius: 0;
+    min-height: 100vh;
+    overflow: visible;
+  }
+  #talk-view-title {
+    display: none;
+  }
+  #head-area {
+    position: sticky;
+    top: var(--header-height, 56px);
+    z-index: 40;
+    box-shadow: var(--shadow-sm);
+  }
+  #talk-area {
+    height: calc(100vh - 200px);
+  }
+  .message-row {
+    max-width: 92%;
+  }
+}
+
+
+/* --- トーク画面上部の相手/グループアイコン --- */
+#talk-title-avatar {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+#talk-title-avatar:empty {
+  display: none;
+}
+
+/* --- グループアイコン変更（管理者のみ） --- */
+#group-icon-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+#group-icon-area.hidden {
+  display: none;
+}
+#group-icon-area .group-icon-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+#group-icon-area .group-icon-buttons .hidden {
+  display: none;
+}
+#group-icon-area .group-icon-buttons .secondary-button {
+  width: auto;
+  margin-top: 0;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.82rem;
+}
+
+
+/* ================================
+   ★ トーク画面ヘッダーの「相手/グループのアイコン＋名前」
+   PCでは今までどおり1行。スマホは右側に「選択」「メンバー」が並んで名前の幅が足りなくなるので、
+   アイコン＋名前を2段目に回す。
+   ================================ */
+#talk-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 0;
+  min-width: 0;
+}
+#talk-title-wrap #talk-title {
+  min-width: 0;
+}
+@media (max-width: 600px) {
+  #head-area {
+    flex-wrap: wrap;
+    row-gap: 0.5rem;
+  }
+  #to-home-button { order: 1; }
+  #select-mode-button { order: 2; margin-left: auto; }
+  #member-button { order: 3; }
+  #talk-title-wrap { order: 4; flex: 1 1 100%; }
+  /* ヘッダーが2段になった分（約44px）だけトーク領域を低くして、画面全体の高さを変えない */
+  #talk-area {
+    height: calc(100vh - 242.5px);
+  }
+}

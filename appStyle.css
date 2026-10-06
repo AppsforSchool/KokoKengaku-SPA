@@ -1,0 +1,1477 @@
+:root {
+  --primary: #007AB7;
+  --primary-rgb: 0, 122, 183;
+
+  --light: #fcf2e8;
+
+  /* --- 追加トークン（テーマカラーは変更なし、派生値のみ。他画面と共通） --- */
+  --primary-dark: #005f8f;
+  --primary-soft: #eaf5fc;
+  --bg: #eef1f5;
+  --surface: #ffffff;
+  --surface-alt: #f6f8fa;
+  --text: #24303d;
+  --text-muted: #7c8794;
+  --border: #e6e9ee;
+
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-full: 999px;
+
+  --shadow-sm: 0 1px 2px rgba(20, 30, 40, 0.06);
+  --shadow-md: 0 6px 20px rgba(20, 30, 40, 0.08);
+  --shadow-lg: 0 16px 40px rgba(20, 30, 40, 0.14);
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+html {
+  font-size: 16px;
+}
+body {
+  font-family: "BIZ UDGothic", sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  touch-action: manipulation;
+}
+div, p {
+  touch-action: manipulation;
+}
+.hidden {
+  display: none !important;
+}
+.visually-hidden-input {
+  display: none;
+}
+
+
+/* --- 起動時オーバーレイ（他画面と共通デザイン） --- */
+#loading-overlay,
+#no-active-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(15, 20, 26, 0.85);
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  gap: 0.5rem;
+  padding: 1rem;
+}
+#loading-overlay h1 {
+  font-size: 2.6rem;
+  color: white;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+#loading-overlay p,
+#no-active-overlay p {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+.loading-progress-bar {
+  width: 200px;
+  max-width: 70vw;
+  height: 3px;
+  border-radius: var(--radius-full);
+  background-color: rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  margin-top: 0.3rem;
+}
+.loading-progress-bar-fill {
+  width: 0%;
+  height: 100%;
+  background-color: #fff;
+  border-radius: var(--radius-full);
+  transition: width 0.25s var(--ease);
+}
+#loading-overlay.hidden,
+#no-active-overlay.hidden {
+  display: none;
+}
+
+
+/* --- アカウント設定ドロワー（他画面と共通デザイン） --- */
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(15, 20, 26, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s var(--ease), visibility 0.3s var(--ease);
+}
+.drawer-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 320px;
+  max-width: 85%;
+  height: 100%;
+  background-color: var(--surface);
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  transform: translateX(100%);
+  transition: transform 0.35s var(--ease);
+  padding: 1.5rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+.drawer.is-open {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.drawer-header p {
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin: 0;
+  color: var(--text);
+}
+.drawer-close-button {
+  background-color: var(--surface-alt);
+  border: none;
+  font-size: 1.3rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--text-muted);
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: var(--radius-full);
+  transition: background-color 0.2s var(--ease), color 0.2s var(--ease);
+  text-align: center;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.drawer-close-button:hover {
+  background-color: var(--border);
+  color: var(--text);
+}
+
+.drawer-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-left: 2px;
+  padding-right: 6px;
+}
+
+.drawer-section {
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.drawer-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.drawer-section p.title {
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: var(--primary);
+  text-transform: uppercase;
+  margin-top: 0;
+  margin-bottom: 0.6rem;
+}
+.drawer-section p {
+  font-size: 0.92rem;
+  margin-bottom: 0.6rem;
+  color: var(--text);
+}
+
+.normal-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.7rem;
+  width: 100%;
+  margin-top: 0.5rem;
+  text-align: center;
+  cursor: pointer;
+  display: block;
+  box-sizing: border-box;
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+.normal-button:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+  box-shadow: var(--shadow-md);
+}
+.normal-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+.normal-button:disabled {
+  background-color: #dbe0e6;
+  color: #9aa4ae;
+  border: none;
+  box-shadow: none;
+}
+.normal-button.logout-button {
+  background-color: var(--surface-alt);
+  color: #d64545;
+  box-shadow: none;
+  border: 1.5px solid var(--border);
+}
+.normal-button.logout-button:hover:not(:disabled) {
+  background-color: #fdecec;
+  border-color: #f3c8c8;
+}
+
+.drawer input {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  margin-bottom: 10px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  box-sizing: border-box;
+  background-color: var(--surface-alt);
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+.drawer input:hover {
+  border-color: #c7ccd2;
+}
+.drawer input:focus {
+  border-color: var(--primary);
+  background-color: var(--surface);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+.drawer #username-message {
+  font-size: 0.8rem;
+  margin-top: 0.4rem;
+  font-weight: 700;
+}
+.drawer #passwordMessage {
+  font-size: 0.8rem;
+  margin-top: 0.4rem;
+  font-weight: 700;
+}
+
+/* --- モーダル共通（他画面と共通デザイン） --- */
+.modal-overlay,
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 20, 26, 0.55);
+  backdrop-filter: blur(3px);
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+.modal-overlay.hidden,
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: var(--surface);
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 460px;
+  max-height: 85vh;
+  overflow-y: auto;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  animation: pop-in 0.2s var(--ease);
+}
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.modal-content .title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.modal-content .close-button {
+  background-color: var(--surface-alt);
+  border: none;
+  font-size: 1.3rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--text-muted);
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: var(--radius-full);
+  transition: background-color 0.2s var(--ease), color 0.2s var(--ease);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-content .close-button:hover,
+.modal-content .close-button:focus {
+  color: var(--text);
+  background-color: var(--border);
+  text-decoration: none;
+  cursor: pointer;
+}
+.modal-content img {
+  max-width: 100%;
+  max-height: 80vh;
+  height: auto;
+  /* ★ アバター画像(img.avatar-circle)を円形にするため、ここでの角丸指定は無効化している
+        （QRコードなど他の画像は元々四角のままで問題ないため） */
+}
+
+
+/* --- ヘッダー領域（他画面と共通デザイン） --- */
+#app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 1.2rem;
+  background-color: var(--surface);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  gap: 10px;
+}
+#app-header .hidden {
+  display: none;
+}
+#app-header #title-area {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+#app-header #title-area #header-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+}
+#app-header #title-area #header-title .rainbow {
+  background: linear-gradient(
+    90deg,
+    #ff5a5a, #ffbc41, #f5f551, #5eff5e, #84a1ff, #ff45ff, #ff5a5a
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: wave 2s linear infinite;
+}
+
+#user-data {
+  display: flex;
+  align-items: center;
+}
+#header-username {
+  font-weight: 700;
+}
+#setting-button,
+#share-modal-btn {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 0.5rem 0.9rem;
+  margin: 0 0 0 0.6rem;
+  width: auto;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  background-color: var(--primary-soft);
+  color: var(--primary-dark);
+  border: none;
+  border-radius: var(--radius-full);
+  transition: background-color 0.2s var(--ease), transform 0.15s var(--ease);
+}
+#setting-button:hover,
+#share-modal-btn:hover {
+  background-color: rgba(var(--primary-rgb), 0.22);
+}
+#setting-button:active,
+#share-modal-btn:active {
+  transform: scale(0.97);
+}
+
+
+/* --- メインコンテナ --- */
+#list-view {
+  max-width: 760px;
+  margin: 1.5rem auto;
+  padding: 1.5rem;
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+#list-title {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+}
+#list-problem-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  max-width: 560px;
+  box-sizing: border-box;
+  margin: 0 auto 1.25rem;
+  padding: 0.75rem 1rem;
+  background-color: rgba(0, 122, 183, 0.08);
+  border: 1px solid rgba(0, 122, 183, 0.25);
+  border-radius: var(--radius-md);
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.92rem;
+  text-decoration: none;
+  transition: background-color 0.2s var(--ease);
+}
+#list-problem-banner:hover {
+  background-color: rgba(0, 122, 183, 0.14);
+}
+
+.mini {
+  font-size: 70%;
+}
+
+.split-line {
+  display: flex;
+  width: 90%;
+  border-bottom: 1px solid var(--border);
+  margin: 2rem auto;
+}
+
+#talk-button-loading {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 1rem 0;
+}
+#talk-button-loading.hidden {
+  display: none;
+}
+
+:where(#list-view) .selection {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+  flex-direction: column;
+  gap: 10px;
+}
+:where(#list-view) .selection .title-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+:where(#list-view) .selection .title-area .title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  width: auto;
+}
+:where(#list-view) .selection .title-area button {
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.7rem;
+  margin: 0 0 0 0.8rem;
+  width: auto;
+  text-align: center;
+  cursor: pointer;
+  display: block;
+  box-sizing: border-box;
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-full);
+  transition: background-color 0.2s var(--ease);
+}
+:where(#list-view) .selection .title-area button:hover {
+  background-color: var(--primary-dark);
+}
+
+:where(#list-view) .selection .normal-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* --- トークルーム一覧（1件ずつのカード行） --- */
+.talk-group-header {
+  width: 100%;
+  max-width: 560px;
+  box-sizing: border-box;
+  margin: 0.75rem auto 0;
+  padding: 0 0.3rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  text-align: left;
+}
+.talk-group-header:first-child {
+  margin-top: 0;
+}
+.talk-button {
+  display: flex;
+  border-radius: var(--radius-md);
+  background-color: var(--surface-alt);
+  border: 1.5px solid var(--border);
+  padding: 0.9rem 1.1rem;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto 0.6rem;
+  transition: background-color 0.15s var(--ease), border-color 0.15s var(--ease), box-shadow 0.15s var(--ease), transform 0.15s var(--ease);
+}
+.talk-button:hover {
+  background-color: var(--primary-soft);
+  border-color: rgba(var(--primary-rgb), 0.35);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+.talk-button:active {
+  transform: translateY(0);
+}
+.talk-button .title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.talk-button .new-message {
+  color: var(--primary-dark);
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.talk-button .new-message.no-message {
+  font-weight: 700;
+  background: linear-gradient(
+    90deg,
+    #ff5a5a, #ffbc41, #f5f551, #5eff5e, #84a1ff, #ff45ff, #ff5a5a
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: wave 2s linear infinite;
+}
+
+:where(#list-view) .selection button {
+  padding: 0.8rem 1.2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--primary);
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-alt);
+  transition: all 0.2s var(--ease);
+
+  width: 85%;
+  max-width: 500px;
+  margin: 0 auto;
+  margin-bottom: 0.4rem;
+}
+:where(#list-view) .selection button:hover {
+  background-color: var(--primary-soft);
+  border-color: rgba(var(--primary-rgb), 0.4);
+}
+:where(#list-view) .selection button.active {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+:where(#list-view) .selection button:disabled {
+  background-color: #dbe0e6;
+  color: #fff;
+  box-shadow: none;
+}
+
+:where(#list-view) .selection select {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 1.0rem;
+  color: var(--primary);
+
+  width: 85%;
+  padding: 0.6rem 0.8rem;
+  margin: auto;
+  margin-bottom: 0.8rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-alt);
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  outline: none;
+}
+:where(#list-view) .selection select:hover {
+  border-color: #c7ccd2;
+}
+
+:where(#list-view) .selection .segmented-buttons {
+  display: flex;
+  width: 85%;
+  margin-left: auto;
+  margin-right: auto;
+}
+:where(#list-view) .selection .segmented-buttons button {
+  border-color: var(--primary);
+  border-radius: 0;
+  margin-left: -1.5px;
+  margin-right: -1.5px;
+  width: 100%;
+  max-width: none;
+  flex: 1;
+}
+:where(#list-view) .selection .segmented-buttons button:hover {
+  background-color: var(--primary-soft);
+  border-color: var(--primary);
+}
+:where(#list-view) .selection .segmented-buttons button.active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  box-shadow: none;
+}
+:where(#list-view) .selection .segmented-buttons :first-child {
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  margin-left: 0;
+}
+:where(#list-view) .selection .segmented-buttons :last-child {
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  margin-right: 0;
+}
+:where(#list-view) .selection .segmented-buttons :first-child:last-child {
+  border-radius: var(--radius-md);
+}
+
+.buttons-box {
+  background-color: var(--surface-alt);
+  height: auto;
+  width: 85%;
+  overflow-y: auto;
+  margin: auto;
+  justify-content: flex-start;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+}
+.buttons-box button:first-child {
+  margin-top: 1rem;
+}
+.buttons-box button:last-child {
+  margin-bottom: 1rem;
+}
+.buttons-box .title-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 1rem;
+  padding-bottom: 0.4rem;
+}
+.buttons-box .title-area .head {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.buttons-box .title-area button {
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.7rem;
+  margin: 0 0 0 0.8rem;
+  width: auto;
+  text-align: center;
+  cursor: pointer;
+  display: block;
+  box-sizing: border-box;
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-full);
+}
+.buttons-box button {
+  margin-bottom: 0.4rem;
+  padding: 0.6rem 1rem;
+}
+
+
+.number-stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  width: 85%;
+  height: 50px;
+  padding: 0;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: var(--surface-alt);
+}
+.number-stepper:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+}
+.number-stepper button {
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  width: 50px;
+  height: 100%;
+  font-size: 24px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+.number-stepper button:hover {
+  background-color: transparent;
+  color: var(--primary);
+}
+.number-stepper button:first-child {
+  margin-left: -2px;
+}
+.number-stepper button:last-child {
+  margin-right: -2px;
+}
+
+.number-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--text);
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+.number-input::placeholder {
+  font-size: 18px;
+  color: #adb5bd;
+}
+
+/* --- プロフィールモーダル --- */
+#profile-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 0.9rem;
+}
+.profile-avatar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.profile-avatar-wrap #profile-avatar-holder {
+  position: relative;
+}
+.profile-avatar-wrap.editable #profile-avatar-holder {
+  cursor: pointer;
+  transition: opacity 0.15s var(--ease);
+}
+.profile-avatar-wrap.editable #profile-avatar-holder:hover {
+  opacity: 0.82;
+}
+.profile-avatar-wrap.editable #profile-avatar-holder::after {
+  content: "変更";
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+  pointer-events: none;
+}
+#profile-avatar-remove-button {
+  background: none;
+  border: none;
+  color: #d64545;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+  padding: 0;
+}
+#profile-avatar-remove-button.hidden {
+  display: none;
+}
+#profile-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  word-break: break-all;
+  text-align: center;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-md);
+  box-sizing: border-box;
+}
+#drawerUsername.admin {
+  background: linear-gradient(
+    90deg,
+    #ff5a5a, #ffbc41, #f5f551, #5eff5e, #84a1ff, #ff45ff, #ff5a5a
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: wave 2s linear infinite;
+}
+/* ★ 景品（「問題投稿」アプリのスペシャルライブで付与される演出）：グラデーションは管理者と同一、速度だけ半分（4s） */
+#drawerUsername.prize {
+  background: linear-gradient(
+    90deg,
+    #ff5a5a, #ffbc41, #f5f551, #5eff5e, #84a1ff, #ff45ff, #ff5a5a
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: wave 4s linear infinite;
+}
+/* ★ プロフィールモーダルの名前（「問題投稿」アプリの実装に合わせて、幅・パディングを含めて専用のルールにする） */
+#profile-name.admin {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  background: linear-gradient(
+    90deg,
+    #ff5a5a, #ffbc41, #f5f551, #5eff5e, #84a1ff, #ff45ff, #ff5a5a
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: wave 2s linear infinite;
+}
+#profile-name.prize {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  background: linear-gradient(
+    90deg,
+    #ff5a5a, #ffbc41, #f5f551, #5eff5e, #84a1ff, #ff45ff, #ff5a5a
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: wave 4s linear infinite;
+}
+
+#profile-name-input {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-alt);
+  box-sizing: border-box;
+  text-align: center;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+#profile-name-input:hover {
+  border-color: #c7ccd2;
+}
+#profile-name-input:focus {
+  border-color: var(--primary);
+  background-color: var(--surface);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+
+.profile-label {
+  align-self: flex-start;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: -0.3rem;
+}
+
+#profile-text,
+#profile-text-edit {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  width: 100%;
+  min-height: 110px;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  word-break: break-word;
+  box-sizing: border-box;
+  line-height: 1.55;
+  text-align: left;
+}
+#profile-text {
+  background-color: var(--surface-alt);
+  border: 1.5px solid var(--border);
+  white-space: pre-wrap;
+  color: var(--text);
+}
+#profile-text-edit {
+  background-color: var(--surface);
+  border: 1.5px solid var(--border);
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+#profile-text-edit:hover {
+  border-color: #c7ccd2;
+}
+#profile-text-edit:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+#profile-text-edit.hidden {
+  display: none;
+}
+
+.profile-edit-button-row {
+  display: flex;
+  gap: 0.6rem;
+  width: 100%;
+}
+#profile-cancel-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.7rem;
+  flex: 1;
+  text-align: center;
+  cursor: pointer;
+  box-sizing: border-box;
+  background-color: var(--surface-alt);
+  color: var(--text-muted);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: background-color 0.15s var(--ease), border-color 0.15s var(--ease);
+}
+#profile-cancel-button:hover {
+  background-color: var(--border);
+}
+#profile-cancel-button.hidden {
+  display: none;
+}
+#profile-edit-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.7rem;
+  flex: 1;
+  text-align: center;
+  cursor: pointer;
+  display: block;
+  box-sizing: border-box;
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease), background-color 0.15s var(--ease);
+}
+#profile-edit-button:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+  box-shadow: var(--shadow-md);
+}
+#profile-edit-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+#profile-edit-button:disabled {
+  background-color: #dbe0e6;
+  color: #9aa4ae;
+  box-shadow: none;
+}
+#profile-edit-button.hidden {
+  display: none;
+}
+
+/* --- 新しいトークを作成（管理者のみ） --- */
+#open-create-talk-modal-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.7rem;
+  width: 100%;
+  max-width: 560px;
+  text-align: center;
+  cursor: pointer;
+  display: block;
+  box-sizing: border-box;
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  margin: 0 auto 1.25rem;
+  transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease), background-color 0.15s var(--ease);
+}
+#open-create-talk-modal-button:hover {
+  background-color: var(--primary-dark);
+  box-shadow: var(--shadow-md);
+}
+#open-create-talk-modal-button:active {
+  transform: scale(0.98);
+}
+#open-create-talk-modal-button.hidden {
+  display: none;
+}
+
+/* ★ このモーダルはフォーム（左揃え）なので、.modal-content の text-align:center を上書きする。
+      .profile-label の align-self:flex-start は親がflexコンテナでないと効かず、
+      センター寄せのまま崩れて見えていたための対応。 */
+#create-talk-modal .modal-content {
+  text-align: left;
+}
+
+#create-talk-title-input,
+#create-talk-member-search {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-size: 1rem;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-alt);
+  box-sizing: border-box;
+  text-align: left;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+#create-talk-title-input:hover,
+#create-talk-member-search:hover {
+  border-color: #c7ccd2;
+}
+#create-talk-title-input:focus,
+#create-talk-member-search:focus {
+  border-color: var(--primary);
+  background-color: var(--surface);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+
+#create-talk-member-loading {
+  padding: 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+#create-talk-member-loading.hidden {
+  display: none;
+}
+
+#create-talk-member-list {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  gap: 4px;
+  max-height: 40vh;
+  overflow-y: auto;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.4rem;
+  box-sizing: border-box;
+}
+.create-talk-member-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s var(--ease);
+}
+.create-talk-member-item:hover {
+  background-color: var(--surface-alt);
+}
+.create-talk-member-item input[type="checkbox"] {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+.create-talk-member-item span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#create-talk-submit-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.7rem;
+  width: 100%;
+  text-align: center;
+  cursor: pointer;
+  display: block;
+  box-sizing: border-box;
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease), background-color 0.15s var(--ease);
+}
+#create-talk-submit-button:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+  box-shadow: var(--shadow-md);
+}
+#create-talk-submit-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+#create-talk-submit-button:disabled {
+  background-color: #dbe0e6;
+  color: #9aa4ae;
+  box-shadow: none;
+}
+
+/* --- アバター（頭文字アイコン） --- */
+.avatar-circle {
+  width: 2.2rem;
+  height: 2.2rem;
+  min-width: 2.2rem;
+  border-radius: var(--radius-full);
+  background: linear-gradient(155deg, var(--primary), var(--primary-dark));
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  user-select: none;
+}
+.avatar-circle.small {
+  width: 1.8rem;
+  height: 1.8rem;
+  min-width: 1.8rem;
+  font-size: 0.8rem;
+}
+.avatar-circle.large {
+  width: 4.4rem;
+  height: 4.4rem;
+  min-width: 4.4rem;
+  font-size: 1.7rem;
+}
+img.avatar-circle {
+  object-fit: cover;
+  display: block;
+}
+
+
+#details-area {
+  background-color: var(--surface-alt);
+  height: 400px;
+  width: 85%;
+  overflow-y: auto;
+  margin: auto;
+  justify-content: flex-start;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+}
+#details-loading {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-top: 1rem;
+  color: var(--text-muted);
+}
+#details-loading.hidden {
+  display: none;
+}
+
+
+.detail-message {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-top: -0.2rem;
+  line-height: 1.2;
+  color: var(--text);
+}
+.error-message {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #d64545;
+  margin-top: -0.5rem;
+}
+
+#list-view #start-button {
+  padding: 0.85rem 1.2rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: white;
+  background-color: var(--primary);
+  cursor: pointer;
+  border: none;
+  border-radius: var(--radius-full);
+  transition: background-color 0.2s var(--ease), box-shadow 0.2s var(--ease), transform 0.15s var(--ease);
+
+  width: 85%;
+  max-width: 500px;
+  margin: 0 auto;
+  margin-bottom: 0.4rem;
+  box-shadow: var(--shadow-sm);
+}
+#list-view #start-button:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+  box-shadow: var(--shadow-md);
+}
+#list-view #start-button:disabled {
+  background-color: #dbe0e6;
+  box-shadow: none;
+}
+
+@keyframes wave {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+footer {
+  background-color: #333;
+  color: white;
+  padding: 0.5rem 0;
+  text-align: center;
+  width: 100%;
+}
+footer p {
+  font-size: 0.7rem;
+}
+
+@media (max-width: 600px) {
+  #app-header {
+    padding: 0.75rem 1rem;
+  }
+  #user-data {
+    flex-direction: column;
+    gap: 0.3rem;
+    align-items: flex-end;
+  }
+  #setting-button,
+  #share-modal-btn {
+    margin: 0;
+    font-size: 0.75rem;
+    padding: 0.4rem 0.7rem;
+    width: auto;
+  }
+  #list-view {
+    margin: 0;
+    border-radius: 0;
+    min-height: 100vh;
+  }
+
+  :where(#list-view) .selection .segmented-buttons {
+    flex-direction: column;
+  }
+  :where(#list-view) .selection .segmented-buttons button {
+    margin: 0;
+    margin-top: -1.5px;
+    margin-bottom: -1.5px;
+    border-radius: 0;
+  }
+  :where(#list-view) .selection .segmented-buttons :first-child {
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    margin-top: 0;
+  }
+  :where(#list-view) .selection .segmented-buttons :last-child {
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    margin-bottom: 0;
+  }
+
+  :where(#list-view) button,
+  :where(#create-talk-modal) button {
+    width: 80%;
+  }
+}
+
+
+/* ================================
+   ★ 個人 / グループ 切替UI（iOS風セグメントコントロール）
+   ================================ */
+.segmented-control {
+  position: relative;
+  display: flex;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto 1.25rem;
+  padding: 4px;
+  box-sizing: border-box;
+  background-color: #e4e5ea;
+  border-radius: var(--radius-full);
+}
+.segmented-thumb {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  background-color: var(--surface);
+  border-radius: var(--radius-full);
+  box-shadow: 0 2px 8px rgba(20, 30, 40, 0.14);
+  transition: transform 0.28s var(--ease);
+  pointer-events: none;
+}
+.segmented-control[data-active="group"] .segmented-thumb {
+  transform: translateX(100%);
+}
+.segmented-item {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.65rem 0.5rem;
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text);
+  background: none;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: color 0.2s var(--ease);
+}
+.segmented-item.active {
+  color: var(--primary);
+}
+.tab-badge {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: var(--radius-full);
+  background-color: #ff3b30;
+  flex-shrink: 0;
+}
+.tab-badge.hidden {
+  display: none;
+}
+
+.talk-list-area.hidden {
+  display: none;
+}
+
+/* --- 一覧カードのアイコン + 名前 --- */
+.talk-button .avatar-circle {
+  width: 2.8rem;
+  height: 2.8rem;
+  min-width: 2.8rem;
+  font-size: 1.1rem;
+}
+.talk-button .title {
+  flex: 1;
+  min-width: 0;
+}
+.talk-button .talk-sub {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+.talk-button.no-room {
+  background-color: var(--surface);
+}
+.talk-button.no-room .new-message {
+  color: var(--text-muted);
+  font-weight: 400;
+  font-size: 0.78rem;
+}
+.talk-list-empty {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 1rem 0;
+}
+
+
+/* ================================
+   ★ SPA対応メモ
+   ・トーク一覧は #list-view、トーク画面は #talk-view（talkStyle.css）に分かれている
+   ・一覧専用の汎用ルール(.selection 系 / スマホ用 button)は :where(#list-view) で一覧の中だけに限定してある
+     （:where は詳細度が増えないので、元の優先順位のまま他のルールと共存できる）
+   ================================ */

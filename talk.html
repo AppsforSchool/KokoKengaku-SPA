@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>高校見学</title>
+  <!-- ★ SPA化により、トーク画面は app.html#talk_ルームID に統合した。
+       以前に送った通知のリンクやブックマーク(talk.html?id=…)が切れないよう、ここから転送する -->
+  <script>
+    var id = new URLSearchParams(location.search).get("id");
+    location.replace("app.html" + (id ? "#talk_" + encodeURIComponent(id) : "#home"));
+  </script>
+  <noscript><meta http-equiv="refresh" content="0; url=app.html"></noscript>
+</head>
+<body></body>
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ja">
+  
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#007AB7">
+  <link rel="manifest" href="manifest.json">
+  <title>高校見学</title>
+  <meta name="apple-mobile-web-app-capable" content="yes"> 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Signika+Negative:wght@300..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="appStyle.css">
+  <link rel="stylesheet" href="talkStyle.css">
+  <link rel="stylesheet" href="appDialogStyle.css">
+  <link rel="icon" type="image/png" sizes="32x32" href="icon-512.png">
+  <link rel="apple-touch-icon" href="icon-512.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-512.png">
+  
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <!-- ★ OneSignal（プッシュ通知） -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+</head>
+  
+<body>
+  <div id="loading-overlay">
+    <h1>loading...</h1>
+    <p id="loading-overlay-text">システムの読み込みに時間がかかる場合があります｡</p>
+    <div id="loading-progress-bar" class="loading-progress-bar">
+      <div id="loading-progress-bar-fill" class="loading-progress-bar-fill"></div>
+    </div>
+    <button id="loading-overlay-skip-button" class="hidden">あとで読み込む</button>
+  </div>
+  <div id="no-active-overlay" class="hidden">
+    <p>アカウントが停止されています</p>
+  </div>
+  
+  <div id="share-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="title">シェア</p>
+        <span id="share-modal-close" class="close-button">&times;</span>
+      </div>
+      <img src="qrcode.png" alt="QR Code">
+    </div>
+  </div>
+  
+  <!-- プロフィールモーダル -->
+  <div id="profile-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="title">プロフィール</p>
+        <span id="profile-modal-close" class="close-button">&times;</span>
+      </div>
+      <div id="profile-area">
+        <div class="profile-avatar-wrap">
+          <div id="profile-avatar-holder"></div>
+          <input type="file" id="profile-avatar-input" accept="image/*" class="visually-hidden-input">
+          <button id="profile-avatar-remove-button" class="hidden">画像を削除</button>
+        </div>
+
+        <p id="profile-name">取得中...</p>
+        <input id="profile-name-input" class="hidden" type="text" placeholder="ユーザーネーム">
+
+        <p class="profile-label">ステータスメッセージ</p>
+        <div id="profile-text">取得中...</div>
+        <textarea id="profile-text-edit" class="hidden" placeholder="自己紹介を入力してください"></textarea>
+
+        <div class="profile-edit-button-row">
+          <button id="profile-cancel-button" class="hidden">キャンセル</button>
+          <button id="profile-edit-button" class="hidden">プロフィールを編集</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== トーク画面で使うモーダル ===== -->
+  <div id="member-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="title">メンバー</p>
+        <span id="member-modal-close" class="close-button">&times;</span>
+      </div>
+      
+      <!-- グループアイコンの変更（管理者 かつ グループのときだけ表示） -->
+      <div id="group-icon-area" class="hidden">
+        <div id="group-icon-holder"></div>
+        <input type="file" id="group-icon-input" accept="image/*" class="visually-hidden-input">
+        <div class="group-icon-buttons">
+          <button id="group-icon-change-button" class="secondary-button" type="button">グループアイコンを変更</button>
+          <button id="group-icon-remove-button" class="secondary-button hidden" type="button">画像を削除</button>
+        </div>
+      </div>
+
+      <div id="member-area">
+        
+      </div>
+    </div>
+  </div>
+
+  <div id="read-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="title">既読</p>
+        <span id="read-modal-close" class="close-button">&times;</span>
+      </div>
+      
+      <div id="read-area">
+        
+      </div>
+    </div>
+  </div>
+
+  <div id="edit-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="title">編集</p>
+        <span id="edit-modal-close" class="close-button">&times;</span>
+      </div>
+      <input id="new-userId-input" placeholder="user id"></input>
+      <textarea id="new-message-input" rows="5"></textarea>
+      <p id="new-message-time-label" class="profile-label hidden" style="margin-top: 0.5rem;">送信日時（管理者のみ編集可）</p>
+      <input id="new-message-time-input" type="datetime-local" class="hidden">
+      <button id="new-message-change-button">保存</button>
+      <span class="split-line"></span>
+      <button id="message-delete-button">削除</button>
+    </div>
+  </div>
+
+  <!-- 転送先選択モーダル（管理者のみ） -->
+  <div id="forward-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="title">メッセージを転送</p>
+        <span id="forward-modal-close" class="close-button">&times;</span>
+      </div>
+      <p id="forward-modal-loading">読み込み中...</p>
+      <div id="forward-room-list"></div>
+    </div>
+  </div>
+
+  <!-- 画像送信モーダル -->
+  <div id="image-upload-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="title">画像を送信</p>
+        <span id="image-modal-close" class="close-button">&times;</span>
+      </div>
+
+      <input type="file" id="modal-image-input" accept="image/*" class="visually-hidden-input" />
+      <button id="select-image-button" class="normal-button">画像を選択する</button>
+
+      <div id="image-preview-container" class="image-preview-container hidden">
+        <img id="image-preview" src="" alt="プレビュー">
+      </div>
+      <textarea id="image-message-input" rows="3" placeholder="メッセージを添える（任意）"></textarea>
+      <button id="submit-image-button" class="normal-button" disabled>画像を送信</button>
+    </div>
+  </div>
+
+  <!-- アンケート作成モーダル -->
+  <div id="poll-create-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="title">アンケートを作成</p>
+        <span id="poll-create-modal-close" class="close-button">&times;</span>
+      </div>
+
+      <textarea id="poll-question-input" rows="3" placeholder="質問・説明文を入力"></textarea>
+
+      <p class="profile-label" style="margin-top: 1rem;">選択肢（最大10個）</p>
+      <div id="poll-choices-list"></div>
+      <button id="poll-add-choice-button" class="secondary-button" type="button">＋ 選択肢を追加</button>
+
+      <button id="poll-submit-button" class="normal-button" disabled>アンケートを送信</button>
+    </div>
+  </div>
+
+  <!-- アンケート回答者一覧モーダル -->
+  <div id="poll-voters-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="title" id="poll-voters-title">回答した人</p>
+        <span id="poll-voters-modal-close" class="close-button">&times;</span>
+      </div>
+      <div id="poll-voters-area"></div>
+    </div>
+  </div>
+
+  <!-- 新しいグループ作成モーダル（管理者のみ） -->
+  <div id="create-talk-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="title">新しいグループを作成</p>
+        <span id="create-talk-modal-close" class="close-button">&times;</span>
+      </div>
+
+      <p class="profile-label">グループ名</p>
+      <input id="create-talk-title-input" type="text" placeholder="グループの名前">
+
+      <p class="profile-label" style="margin-top: 1rem;">メンバー（自分は自動的に追加されます・2人以上選択）</p>
+      <input id="create-talk-member-search" type="text" placeholder="ユーザー名で検索">
+      <p id="create-talk-member-loading">読み込み中...</p>
+      <div id="create-talk-member-list"></div>
+
+      <button id="create-talk-submit-button" class="normal-button" disabled style="margin-top: 1rem;">作成する</button>
+    </div>
+  </div>
+
+  <div id="drawerOverlay" class="drawer-overlay"></div>
+  <div id="accountSettingsDrawer" class="drawer">
+    <div class="drawer-header">
+      <p>アカウント設定</p>
+      <span id="drawerCloseButton" class="drawer-close-button">&times;</span>
+    </div>
+    <div class="drawer-content">
+      <div class="drawer-section">
+        <p class="title">現在のユーザー</p>
+        <p>ID: <strong id="drawerUserId">取得中...</strong><span></span></p>
+        <p>ユーザーネーム: <strong id="drawerUsername">取得中...</strong></p>
+
+        <button id="drawer-edit-profile-button" class="normal-button" style="margin-bottom: 1rem;">プロフィールをみる</button>
+        <button id="enable-push-button" class="normal-button" style="margin-bottom: 1rem;">通知をオンにする</button>
+        <button id="logout-button" class="logout-button normal-button">ログアウト</button>
+      </div>
+    </div>
+  </div>
+  
+  
+  <header id="app-header">
+    <div id="title-area">
+      <p id="header-title">螺鈿紫檀五弦琵琶と<span class="rainbow">不愉快な仲間たち</span></p>
+      <button id="share-modal-btn">シェア</button>
+    </div>
+    
+    <div id="user-data">
+      <button id="setting-button">アカウント情報</button>
+    </div>
+  </header>
+  
+  
+  <main>
+    <div id="list-view" class="hidden">
+      <p id="list-title">My Talk</p>
+      
+      <a id="list-problem-banner" href="https://appsforschool.github.io/ProblemPosting/app.html" target="_blank" rel="noopener noreferrer">
+        問題投稿サイトはこちらから →
+      </a>
+
+      <!-- ★ 個人 / グループ 切替UI（iOS風のセグメントコントロール） -->
+      <div id="talk-tab-control" class="segmented-control" role="tablist">
+        <span class="segmented-thumb"></span>
+        <button type="button" class="segmented-item active" data-tab="personal" role="tab">個人<span class="tab-badge hidden"></span></button>
+        <button type="button" class="segmented-item" data-tab="group" role="tab">グループ<span class="tab-badge hidden"></span></button>
+      </div>
+
+      <p id="talk-button-loading">loading...</p>
+
+      <!-- 個人トーク（自分のみ・1対1）。全ユーザーを表示する -->
+      <div id="personal-button-area" class="talk-list-area selection"></div>
+
+      <!-- グループトーク（3人以上） -->
+      <div id="group-area" class="talk-list-area hidden">
+        <button id="open-create-talk-modal-button" class="normal-button hidden">＋ 新しいグループを作成</button>
+        <div id="talk-button-area" class="selection"></div>
+      </div>
+    </div>
+
+    <!-- ===== トーク画面 ===== -->
+    <div id="talk-view" class="hidden">
+      <p id="talk-view-title">My Talk</p>
+      <div id="head-area">
+        <button id="to-home-button">←ホームへもどる</button>
+        <div id="talk-title-wrap">
+          <div id="talk-title-avatar"></div>
+          <p id="talk-title">loading...</p>
+        </div>
+        <p id="select-mode-button">選択</p>
+        <p id="member-button">メンバー</p>
+      </div>
+      <a id="talk-problem-banner" class="hidden" href="https://appsforschool.github.io/ProblemPosting/app.html" target="_blank" rel="noopener noreferrer">
+        問題投稿サイトはこちらから →
+      </a>
+      <p id="talk-loading" class="hidden">loading...</p>
+      <div id="talk-area" class="selection">
+        <p>loading...</p>
+      </div>
+
+      <button id="back-to-original-button" class="hidden">↓ 元のメッセージにもどる</button>
+
+      <div id="selection-action-bar" class="hidden">
+        <p id="selection-count-text">0件選択中</p>
+        <div class="selection-action-buttons">
+          <button id="selection-forward-button" class="hidden" disabled>まとめて転送</button>
+          <button id="selection-delete-button" disabled>まとめて削除</button>
+          <button id="selection-cancel-button">キャンセル</button>
+        </div>
+      </div>
+
+      <div id="reply-preview-bar" class="hidden">
+        <p id="reply-preview-text"></p>
+        <span id="reply-preview-cancel" class="close-button">&times;</span>
+      </div>
+
+      <div id="message-add-area">
+        <div class="message-add-actions">
+          <button id="open-image-modal-button" title="画像を送信">画像</button>
+          <button id="open-poll-modal-button" title="アンケートを作成">質問</button>
+        </div>
+        <textarea id="message-input" rows="5" placeholder="メッセージを入力"></textarea>
+        <button id="message-add-button" disabled>送信</button>
+      </div>
+      
+    </div>
+  </main>
+
+  <div id="app-dialog-modal" class="modal-overlay hidden">
+    <div class="modal-content app-dialog-content">
+      <p id="app-dialog-title" class="app-dialog-title hidden"></p>
+      <p id="app-dialog-message" class="app-dialog-message"></p>
+      <div class="app-dialog-actions">
+        <button id="app-dialog-ok-button">OK</button>
+        <button id="app-dialog-cancel-button" class="hidden">キャンセル</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="appDialog.js"></script>
+  <script type="module" src="appScript.js"></script>
+</body>
+</html>
